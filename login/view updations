@@ -1,0 +1,121 @@
+# Updated send_email view for handling AJAX requests
+@csrf_protect
+def send_email(request):
+    user_name = request.session.get('user_name')
+    if request.method == "POST":
+        try:
+            # Parse the incoming JSON data
+            data = json.loads(request.body)
+            department = data.get('department')
+            complaint = data.get('complaint')
+            message = data.get('message')
+
+            # Ensure all required fields are provided
+            if not department or not complaint or not message:
+                return JsonResponse({'message': 'Please provide all required fields.'}, status=400)
+
+            # Strip any HTML tags from the email message
+            message = strip_tags(message)
+
+            # Insert the complaint into the database using a connection cursor
+            cur, db = connection()  # Get the database cursor and connection
+            query = """
+                INSERT INTO email_master (department, complaint, message)
+                VALUES (%s, %s, %s)
+            """
+            cur.execute(query, (department, complaint, message))
+            insert_id = cur.lastrowid
+            db.commit()  # Commit the transaction
+
+            # Close the cursor and the database connection
+            cur.close()
+            db.close()
+
+            # Return a success message
+            return JsonResponse({'message': 'Complaint submitted successfully!','complaint':{'department':department,'complaint':complaint,'message':message,'id':insert_id} })
+
+        except Exception as e:
+            print(f"Error while submitting complaint: {e}")
+            return JsonResponse({'message': 'There was an error submitting your complaint.'}, status=500)
+
+    # Fetch department, complaint types, and complaints from the database
+    cur, db = connection()
+    try:
+        # Fetch departments
+        cur.execute("SELECT * FROM department_master")
+        departments = cur.fetchall()
+
+        # Fetch complaint types
+        cur.execute("SELECT * FROM complaint_type_master")
+        complaint_types = cur.fetchall()
+
+        # Fetch complaints
+        cur.execute("SELECT * FROM email_master")
+        complaints = cur.fetchall()
+
+        # Return the data to the template
+        return render(request, 'sendemail.html', {
+            'departments': departments,
+            'complaint_types': complaint_types,
+            'complaints': complaints,
+            'user_name': user_name  # Pass user_name to the template
+            
+        })
+
+    except Exception as e:
+        print(f"Error fetching data: {e}")
+        return JsonResponse({'message': 'There was an error fetching data from the database.'}, status=500)
+    finally:
+        # Ensure to close the cursor and database connection
+        cur.close()
+        db.close()
+
+
+@csrf_protect
+def edit_email(request, id):
+    cur, db = connection()
+    print(000)
+    if request.method == 'POST':
+        print(000)
+        # Retrieve updated data from the request
+        data = json.loads(request.body)
+        department = data.get('department')
+        complaint = data.get('complaint')
+        message = data.get('message')
+        print(11)
+        if not department or not complaint or not message:
+            return JsonResponse({'message': 'Please provide all required fieldsssssss.'}, status=400)
+        print(222)
+        try:
+            data=cur.execute("""
+                UPDATE email_master 
+                SET department = %s, complaint = %s, message = %s
+                WHERE id = %s
+            """, (department, complaint, message, id))
+            print(333)
+            print(data)  
+            db.commit()
+
+            return JsonResponse({'message': 'Complaint updated successfully!', 'id': id, 'department':department,'complaint':complaint,'email_message':message} )
+
+        except Exception as e:
+            print(f"Error while updating complaint: {e}")
+            return JsonResponse({'message': 'There was an error updating the complaint.'}, status=500)
+
+
+@csrf_protect
+def delete_email(request, id):
+    cur, db = connection()
+
+    if request.method == 'POST':
+        try:
+            # Delete the email entry by id
+            cur.execute("DELETE FROM email_master WHERE id = %s", (id,))
+            db.commit()
+
+            return JsonResponse({'message': 'Complaint deleted successfully!', 'id': id})
+
+        except Exception as e:
+            print(f"Error while deleting complaint: {e}")
+            return JsonResponse({'message': 'There was an error deleting the complaint.'}, status=500)
+
