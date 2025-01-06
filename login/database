@@ -1,0 +1,168 @@
+mysql> desc complaint;
++------------------+---------------------------------------------------------+------+-----+-------------------+-----------------------------------------------+
+| Field            | Type                                                    | Null | Key | Default           | Extra                                         |
++------------------+---------------------------------------------------------+------+-----+-------------------+-----------------------------------------------+
+| id               | int                                                     | NO   | PRI | NULL              | auto_increment                                |
+| user_id          | int                                                     | YES  |     | NULL              |                                               |
+| resolved_by_id   | int                                                     | YES  |     | NULL              |                                               |
+| department       | varchar(100)                                            | NO   |     | NULL              |                                               |
+| location         | varchar(100)                                            | NO   |     | NULL              |                                               |
+| complaint_type   | varchar(100)                                            | NO   |     | NULL              |                                               |
+| description      | varchar(350)                                            | NO   |     | NULL              |                                               |
+| issue_raise_date | timestamp                                               | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED                             |
+| complain_status  | enum('done','wip','overdue')                            | NO   |     | NULL              |                                               |
+| due_date         | timestamp                                               | NO   |     | NULL              |                                               |
+| tat              | int                                                     | NO   |     | NULL              |                                               |
+| updated_at       | timestamp                                               | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED on update CURRENT_TIMESTAMP |
+| name             | varchar(255)                                            | NO   |     | NULL              |                                               |
+| status           | enum('pending','work in progress','resolved','overdue') | YES  |     | pending           |                                               |
+| resolution       | text                                                    | YES  |     | NULL              |                                               |
+| assigned_to      | int                                                     | YES  |     | NULL              |                                               |
+| updated_due_date | timestamp                                               | YES  |     | NULL              |                                               |
+| reason           | text                                                    | YES  |     | NULL              |                                               |
++------------------+---------------------------------------------------------+------+-----+-------------------+-----------------------------------------------+
+18 rows in set (0.00 sec)
+
+mysql> desc complaint_history;
++------------------+---------------------------------------------------------+------+-----+-------------------+-----------------------------------------------+
+| Field            | Type                                                    | Null | Key | Default           | Extra                                         |
++------------------+---------------------------------------------------------+------+-----+-------------------+-----------------------------------------------+
+| id               | int                                                     | NO   | PRI | NULL              | auto_increment                                |
+| complaint_id     | int                                                     | NO   |     | NULL              |                                               |
+| user_id          | int                                                     | YES  |     | NULL              |                                               |
+| resolved_by_id   | int                                                     | YES  |     | NULL              |                                               |
+| department       | varchar(100)                                            | NO   |     | NULL              |                                               |
+| location         | varchar(100)                                            | NO   |     | NULL              |                                               |
+| complaint_type   | varchar(100)                                            | NO   |     | NULL              |                                               |
+| description      | varchar(350)                                            | NO   |     | NULL              |                                               |
+| issue_raise_date | timestamp                                               | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED                             |
+| complain_status  | enum('done','wip','overdue')                            | NO   |     | NULL              |                                               |
+| due_date         | timestamp                                               | NO   |     | NULL              |                                               |
+| tat              | int                                                     | NO   |     | NULL              |                                               |
+| updated_at       | timestamp                                               | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED on update CURRENT_TIMESTAMP |
+| name             | varchar(255)                                            | NO   |     | NULL              |                                               |
+| status           | enum('pending','work in progress','resolved','overdue') | YES  |     | pending           |                                               |
+| resolution       | text                                                    | YES  |     | NULL              |                                               |
+| assigned_to      | int                                                     | YES  |     | NULL              |                                               |
+| updated_due_date | timestamp                                               | YES  |     | NULL              |                                               |
+| reason           | text                                                    | YES  |     | NULL              |                                               |
+| change_timestamp | timestamp                                               | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED                             |
+| change_action    | enum('INSERT','UPDATE')                                 | NO   |     | NULL              |                                               |
++------------------+---------------------------------------------------------+------+-----+-------------------+-----------------------------------------------+
+21 rows in set (0.00 sec)
+
+mysql> desc complaint_type_master;
++----------------+--------------+------+-----+---------+----------------+
+| Field          | Type         | Null | Key | Default | Extra          |
++----------------+--------------+------+-----+---------+----------------+
+| id             | int          | NO   | PRI | NULL    | auto_increment |
+| complaint_type | varchar(255) | NO   | UNI | NULL    |                |
+| department     | varchar(255) | YES  |     | NULL    |                |
+| tat            | int          | YES  |     | NULL    |                |
++----------------+--------------+------+-----+---------+----------------+
+4 rows in set (0.00 sec)
+
+mysql> desc deleted_users;
++------------+----------------------+------+-----+---------+-------+
+| Field      | Type                 | Null | Key | Default | Extra |
++------------+----------------------+------+-----+---------+-------+
+| id         | int                  | NO   | PRI | NULL    |       |
+| name       | varchar(255)         | YES  |     | NULL    |       |
+| department | varchar(100)         | YES  |     | NULL    |       |
+| location   | varchar(100)         | YES  |     | NULL    |       |
+| email      | varchar(255)         | YES  |     | NULL    |       |
+| emp_code   | varchar(50)          | YES  |     | NULL    |       |
+| emp_level  | enum('L0','L1','L2') | YES  |     | NULL    |       |
+| created_at | timestamp            | YES  |     | NULL    |       |
++------------+----------------------+------+-----+---------+-------+
+8 rows in set (0.00 sec)
+
+mysql> desc department_master;
++------------+--------------+------+-----+---------+----------------+
+| Field      | Type         | Null | Key | Default | Extra          |
++------------+--------------+------+-----+---------+----------------+
+| id         | int          | NO   | PRI | NULL    | auto_increment |
+| department | varchar(255) | NO   | UNI | NULL    |                |
++------------+--------------+------+-----+---------+----------------+
+2 rows in set (0.00 sec)
+
+mysql> desc email_master;
++------------+--------------+------+-----+---------+----------------+
+| Field      | Type         | Null | Key | Default | Extra          |
++------------+--------------+------+-----+---------+----------------+
+| id         | int          | NO   | PRI | NULL    | auto_increment |
+| department | varchar(255) | NO   |     | NULL    |                |
+| complaint  | text         | NO   |     | NULL    |                |
+| message    | text         | YES  |     | NULL    |                |
++------------+--------------+------+-----+---------+----------------+
+4 rows in set (0.00 sec)
+
+mysql> desc location_master;
++----------+--------------+------+-----+---------+----------------+
+| Field    | Type         | Null | Key | Default | Extra          |
++----------+--------------+------+-----+---------+----------------+
+| id       | int          | NO   | PRI | NULL    | auto_increment |
+| location | varchar(255) | NO   | UNI | NULL    |                |
++----------+--------------+------+-----+---------+----------------+
+2 rows in set (0.00 sec)
+
+mysql> desc office_timings;
++------------------+--------------+------+-----+-------------------+-----------------------------------------------+
+| Field            | Type         | Null | Key | Default           | Extra                                         |
++------------------+--------------+------+-----+-------------------+-----------------------------------------------+
+| id               | int          | NO   | PRI | NULL              | auto_increment                                |
+| non_working_days | varchar(255) | YES  |     | NULL              |                                               |
+| work_start_time  | time         | NO   |     | NULL              |                                               |
+| work_end_time    | time         | NO   |     | NULL              |                                               |
+| created_at       | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED                             |
+| updated_at       | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED on update CURRENT_TIMESTAMP |
++------------------+--------------+------+-----+-------------------+-----------------------------------------------+
+6 rows in set (0.00 sec)
+
+mysql> desc public_holidays;
++--------------+--------------+------+-----+-------------------+-----------------------------------------------+
+| Field        | Type         | Null | Key | Default           | Extra                                         |
++--------------+--------------+------+-----+-------------------+-----------------------------------------------+
+| id           | int          | NO   | PRI | NULL              | auto_increment                                |
+| holiday_name | varchar(255) | NO   |     | NULL              |                                               |
+| holiday_date | date         | NO   |     | NULL              |                                               |
+| created_at   | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED                             |
+| updated_at   | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED on update CURRENT_TIMESTAMP |
++--------------+--------------+------+-----+-------------------+-----------------------------------------------+
+5 rows in set (0.00 sec)
+
+mysql> desc status_master;
++--------+-------------+------+-----+---------+----------------+
+| Field  | Type        | Null | Key | Default | Extra          |
++--------+-------------+------+-----+---------+----------------+
+| id     | int         | NO   | PRI | NULL    | auto_increment |
+| status | varchar(50) | YES  | UNI | NULL    |                |
++--------+-------------+------+-----+---------+----------------+
+2 rows in set (0.00 sec)
+
+mysql> desc user;
++------------------+-----------------------------------------+------+-----+-------------------+-----------------------------------------------+
+| Field            | Type                                    | Null | Key | Default           | Extra                                         |
++------------------+-----------------------------------------+------+-----+-------------------+-----------------------------------------------+
+| id               | int                                     | NO   | PRI | NULL              | auto_increment                                |
+| name             | varchar(255)                            | NO   |     | NULL              |                                               |
+| password         | varchar(255)                            | YES  |     | NULL              |                                               |
+| role             | enum('superadmin','admin','user')       | NO   |     | NULL              |                                               |
+| department       | varchar(100)                            | YES  |     | NULL              |                                               |
+| location         | varchar(100)                            | YES  |     | NULL              |                                               |
+| issue_raise_date | timestamp                               | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED                             |
+| status           | enum('done','wip','overdue')            | YES  |     | NULL              |                                               |
+| tat              | int                                     | YES  |     | NULL              |                                               |
+| due_date         | timestamp                               | YES  |     | NULL              |                                               |
+| emp_code         | varchar(50)                             | YES  |     | NULL              |                                               |
+| full_name        | varchar(255)                            | YES  |     | NULL              |                                               |
+| email            | varchar(255)                            | YES  |     | NULL              |                                               |
+| emp_level        | enum('L0','L1','L2')                    | YES  |     | NULL              |                                               |
+| created_at       | timestamp                               | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED                             |
+| date             | timestamp                               | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED on update CURRENT_TIMESTAMP |
+| is_deleted       | tinyint(1)                              | YES  |     | 0                 |                                               |
+| work_start_time  | time                                    | YES  |     | NULL              |                                               |
+| non_working_days | enum('Saturday','Sunday','Both','None') | YES  |     | NULL              |                                               |
+| work_end_time    | time                                    | YES  |     | NULL              |                                               |
+| holiday_dates    | text                                    | YES  |     | NULL              |                                               |
++------------------+-----------------------------------------+------+-----+-------------------+-----------------------------------------------+
